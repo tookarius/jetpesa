@@ -232,10 +232,16 @@ export default function UltimateJetPesaCockpit() {
     planeImageRef.current = img;
   }, []);
 
+  // UPGRADED: Prevents duplicate toasts from spam-clicking
   const triggerToast = useCallback((msg, type = 'info') => {
-    const id = Date.now() + Math.random();
-    setToasts((prev) => [...prev, { id, msg, type }]);
-    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 3500);
+    setToasts((prev) => {
+      if (prev.some((t) => t.msg === msg)) return prev;
+      const id = Date.now() + Math.random();
+      setTimeout(() => {
+        setToasts((current) => current.filter((t) => t.id !== id));
+      }, 3500);
+      return [...prev, { id, msg, type }];
+    });
   }, []);
 
   const playSynthesizedTone = useCallback((freq, type, duration, volume = 0.03) => {
@@ -381,7 +387,7 @@ export default function UltimateJetPesaCockpit() {
       currentRoundRef.current = fallbackRound;
       setProvablyData(fallbackRound);
       if (openModal) setIsProvablyModalOpen(true);
-      triggerToast('Server fair API unavailable. Using local cryptographic fallback.', 'info');
+      // SILENT FALLBACK: No toast triggered here as requested
       return fallbackRound;
     } finally {
       if (openModal) setProvablyLoading(false);
@@ -405,6 +411,14 @@ export default function UltimateJetPesaCockpit() {
       const userDoc = await getDoc(doc(db, 'users', curr.uid));
       if (userDoc.exists()) {
         const d = userDoc.data();
+        
+        // ENFORCING BAN FEATURE
+        if (d.status === 'banned') {
+          await auth.signOut();
+          router.push('/auth?tab=login&error=Your account has been suspended.');
+          return;
+        }
+
         setBalance(d.walletBalance || 0.0);
         setProfileName(d.displayName || '');
         setEditName(d.displayName || '');
