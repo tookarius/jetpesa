@@ -1,14 +1,4 @@
 import { ThemeProvider } from './ThemeProvider';
-import { Plus_Jakarta_Sans } from 'next/font/google';
-
-// Added 'style: "normal"' to prevent the Next.js font loader parsing bug
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-plus-jakarta-sans',
-  weight: ['400', '500', '600', '700', '800'],
-  style: 'normal',
-});
 
 export const metadata = {
   metadataBase: new URL('https://jetpesa.briceka.com'),
@@ -57,22 +47,27 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={plusJakartaSans.variable} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="format-detection" content="telephone=no" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Direct Google Fonts link completely bypasses the buggy next/font loader */}
+        <link 
+          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" 
+          rel="stylesheet" 
+        />
       </head>
       <body
-        className={plusJakartaSans.className}
         style={{
+          fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
           margin: 0,
           padding: 0,
           overflowX: 'hidden',
           minHeight: '100vh',
           WebkitFontSmoothing: 'antialiased',
           MozOsxFontSmoothing: 'grayscale',
-          backgroundColor: '#020617', // Ensures no white flash on dark mode load
+          backgroundColor: '#020617', // Prevents white flash on dark mode load
           color: '#f8fafc',
         }}
       >
