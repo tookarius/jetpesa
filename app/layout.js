@@ -1,11 +1,13 @@
 import { ThemeProvider } from './ThemeProvider';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 
+// Added 'style: "normal"' to prevent the Next.js font loader parsing bug
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-plus-jakarta-sans',
-  weight: ['400', '500', '600', '700', '800'], // Removed '900'
+  weight: ['400', '500', '600', '700', '800'],
+  style: 'normal',
 });
 
 export const metadata = {
@@ -70,6 +72,8 @@ export default function RootLayout({ children }) {
           minHeight: '100vh',
           WebkitFontSmoothing: 'antialiased',
           MozOsxFontSmoothing: 'grayscale',
+          backgroundColor: '#020617', // Ensures no white flash on dark mode load
+          color: '#f8fafc',
         }}
       >
         <ThemeProvider
